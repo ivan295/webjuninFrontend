@@ -1,0 +1,130 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+                    </div>
+                </ng-template>
+            </p-toolbar>
+  
+            <p-table #dt [value]="ordenan"  responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','country.name','representative.name','status']" [paginator]="true" [rowsPerPageOptions]="[5,10,20]" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"  selectionMode="multiple" [rowHover]="true" dataKey="id">
+  
+                <ng-template pTemplate="header">
+                    <tr> 
+                        <th pSortableColumn="Descripcion"style="text-align: center;">Descripcion </th>
+                        <th pSortableColumn="Descripcion"style="text-align: center;">Categoria </th>
+                        <th pSortableColumn="Dia de Publicacion"style="text-align: center;">Mes de Publicacion</th>
+                        <th pSortableColumn="Dia de Publicacion"style="text-align: center;">Dia de Publicacion</th>
+                        <th pSortableColumn="estado" style="text-align: center;">estado</th>
+                        <th pSortableColumn="Url"style="text-align: center;">Url</th>
+                        <th pSortableColumn="Url Registro Oficial"style="text-align: center;">Url Registro Oficial </th>
+                        <th pSortableColumn="Acciones"style="text-align: center;">Acciones </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-datos>
+                    <tr>
+                        <td style="width:14%; min-width:30rem;text-align: justify;"><span class="p-column-title">Descripcion</span>
+                            {{datos.descripcion}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;text-align: center;"><span class="p-column-title">Categoria</span>
+                            {{datos.CategoriaOrdenanza.descripcion}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;text-align: center;"><span class="p-column-title">mes</span>
+                            {{datos.YearMe.mes}}
+                        </td>
+                        <td style="width:14%; min-width:5rem;text-align: center;">
+                            <span class="p-column-title">Dia de Publicacion</span>
+                            {{datos.dia_publicacion}}
+                        </td>
+                        <td style="width:14%; min-width:10rem;text-align: center;">
+                            <span class="p-column-title">estado</span>
+                            {{datos.estado}}
+                        </td>   
+                        <td style="width:14%; min-width:20rem;text-align: justify;">
+                            <span class="p-column-title">URL</span>
+                            {{datos.url}}
+                        </td>
+                        <td style="width:14%; min-width:20rem;text-align: justify;">
+                            <span class="p-column-title">UrL Registro Oficial</span>
+                            {{datos.url_RegistroOficial}}
+                        </td>
+                        <td>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editProduct()"></button>
+                                <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteProduct()"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+        <p-dialog [(visible)]="ordenanzaDialog" [style]="{width:'700px'}" header="Ordenanza" [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <div class="field">
+                    <label for="name">Descripcion</label>
+                    <input type="text" pInputText id="descripcion" [(ngModel)]="ord.descripcion" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !ord.descripcion}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !ord.descripcion">Descripcion es un campo requerido.</small>
+                </div>
+                
+                <!-- <div class="field">
+                    <label for="name">Día de publicación</label>
+                    <input type="number" pInputText id="dia_publicacion" [(ngModel)]="ord.dia_publicacion" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !ord.dia_publicacion}"/>
+                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !ord.dia_publicacion">Día de publicación es un campo requerido.</small>
+                </div> -->
+
+                <div class="formgrid grid">
+                    <div class="field col-6">
+                        <!-- <label for="dia_publicacion">Dia de Publicación</label> -->
+                        <!-- <p-inputNumber id="dia_publicacion" [(ngModel)]="ord.dia_publicacion" [min]="1" [max]="31" [showButtons]="true"/> -->
+                        
+                        <p-inputNumber mode="decimal" [showButtons]="true" [min]="0" [max]="100">
+                        </p-inputNumber>
+                    </div>
+                    <div class="field col-6">
+                        <label for="status">Estado de la Ordenanza</label>
+                        <p-dropdown [(ngModel)]="ord.estado" inputId="estadoOrd" optionValue="label" placeholder="Seleccionar estado">
+                            <ng-template pTemplate="selectedItem">
+                                <span>Vigente</span>
+                                <span>Derogado</span>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                </div>
+                <!--<div class="field">
+                  <label for="name">Imagen</label>
+                  <input type="text" pInputText id="name" [(ngModel)]="product.imagen" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.nombre}"/>
+                  <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.imagen">Name is required.</small>
+                </div>
+                <div class="formgrid grid">
+                    <div class="field col">
+                        <label for="price">Precio</label>
+                        <p-inputNumber id="price" [(ngModel)]="product.precio" mode="currency" currency="USD" locale="en-US"></p-inputNumber>
+                    </div>
+                </div>
+                <div class="field">
+                  <label for="name">Marca</label>
+                  <input type="text" pInputText id="name" [(ngModel)]="product.marca" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !product.nombre}"/>
+                  <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.marca">Name is required.</small>
+                </div> -->
+            </ng-template>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-danger" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Guardar" icon="pi pi-check" class="p-button-success" (click)="saveProduct()"></button>
+            </ng-template>
+        </p-dialog>
+        <!-- <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="product">Are you sure you want to delete <b>{{product.nombre}}</b>?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteProductDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog> -->
+    </div>
+  </div>
